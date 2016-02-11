@@ -30,6 +30,7 @@ void hashmap_put(char* word){
 
 	unsigned int hash = (unsigned int)(hashmap_hash(word) % HASHMAP_SIZE);
 
+	//If the node in hashmap is empty
 	if(hashmap[hash].in_use != 1){
 		struct node* root = linkedlist_create(word);
 
@@ -40,11 +41,15 @@ void hashmap_put(char* word){
 		pair->node = root;
 
 		hashmap[hash] = *pair;
+	//If the node in hashmap already has a linked list
 	}else{
+		//Check if the word exists in the linked list already
 		struct node* foundNode = linkedlist_find(hashmap[hash].node, word);
 
+		//If it does increment the count
 		if(strcmp(foundNode->word, "") != 0){
 			foundNode->count++;
+		//If it doesn't add it to the end of the linked list
 		}else{
 			struct node *child;
 			child = (struct node *) malloc( sizeof(struct node));
@@ -59,6 +64,7 @@ void hashmap_put(char* word){
 }
 
 void findPlaceInLinkedList(struct node* linkedlist_node, struct node* previous_node, struct node* child){
+	//When ordering the words by count. Find by recursion the right node
 	if(child->count < linkedlist_node->count){
 		if(linkedlist_node->next == 0){	
 			linkedlist_node->next = child;
@@ -87,8 +93,8 @@ void hashmap_print(){
 				struct node *currentNodeCopy;
 				currentNodeCopy = (struct node *) malloc( sizeof(struct node));
 
+				//Copy to a new reference and add to the sorted linked list
 				memcpy(currentNodeCopy, currentNode, sizeof(struct node));
-
 				findPlaceInLinkedList(linkedlist_node, NULL, currentNodeCopy);
 
 				if(currentNode->next != NULL){
