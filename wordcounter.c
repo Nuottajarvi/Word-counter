@@ -1,17 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include <cstring>
+#include <string.h>
 #include "hashmap.h"
+#include "linkedlist.h"
 
 int main(int argc, char *argv[]){
 	char ch;
 	FILE *fp;
 
-	fp = fopen("test.txt"/*argv[1]*/, "r");
+	fp = fopen(argv[1], "r");
 
 	if(fp == NULL){
 		printf("Error while opening the file.\n");
+		return 0;
 	}
  
 
@@ -21,18 +23,15 @@ int main(int argc, char *argv[]){
 	memset(word, 0, 64);
 	int wordIndex = 0;
 
-	while( ( ch = fgetc(fp) ) != EOF ){
-
-		printf("%c", ch);
-		
-		//if character is a letter or a number
-		int charAlphaNumeric = isalnum(ch);
+	while( ( ch = fgetc(fp) ) != EOF ){		
+		//if character is a letter
+		int charAlpha = isalpha(ch);
 		//if character is an apostrophe
 		if(ch == '\''){
-			charAlphaNumeric = 1;
+			charAlpha = 1;
 		}
 
-		if(charAlphaNumeric == 0){
+		if(charAlpha == 0){
 			//if there is some word written already
 			if(word[0] != 0){
 

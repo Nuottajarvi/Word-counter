@@ -5,13 +5,22 @@
 
 struct node * linkedlist_create(char* word){
 	struct node *root;
-	root = (struct node *) malloc( sizeof(node));
+	root = (struct node *) malloc( sizeof(struct node));
 
 	root->next = 0;
 	root->word = word;
 	root->count = 1;
 
 	return root;
+}
+
+void linkedlist_addAfter(struct node* node, struct node* child){
+	if(node->next == 0){
+		node->next = child;
+	}else{
+		child->next = node->next;
+		node->next = child;
+	}
 }
 
 void linkedlist_addChild(struct node* root, struct node* child){
@@ -28,7 +37,7 @@ struct node * linkedlist_find(struct node* node, char* word){
 	}else{
 		if(node->next == 0){
 			struct node *empty;
-			empty = (struct node *) malloc( sizeof(node));
+			empty = (struct node *) malloc( sizeof(struct node));
 
 			empty->next = 0;
 			empty->word = "";

@@ -9,6 +9,8 @@ struct node {
 
 struct node * linkedlist_create(char* word);
 
+void linkedlist_addAfter(struct node* node, struct node* child);
+
 void linkedlist_addChild(struct node* root, struct node* child);
 
 struct node * linkedlist_find(struct node* node, char* word);

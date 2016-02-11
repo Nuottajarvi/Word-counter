@@ -4,7 +4,7 @@
 #include "linkedlist.h"
 #include "hashmap.h"
 
-#define HASHMAP_SIZE 16
+#define HASHMAP_SIZE 1024
 
 struct keyValuePair *hashmap;
 
@@ -34,7 +34,7 @@ void hashmap_put(char* word){
 		struct node* root = linkedlist_create(word);
 
 		struct keyValuePair *pair;
-		pair = (struct keyValuePair *) malloc( sizeof(struct keyValuePair*));
+		pair = (struct keyValuePair *) malloc( sizeof(struct keyValuePair));
 
 		pair->in_use = 1;
 		pair->node = root;
@@ -58,14 +58,38 @@ void hashmap_put(char* word){
 	}
 }
 
+void findPlaceInLinkedList(struct node* linkedlist_node, struct node* previous_node, struct node* child){
+	if(child->count < linkedlist_node->count){
+		if(linkedlist_node->next == 0){	
+			linkedlist_node->next = child;
+		}else{
+			findPlaceInLinkedList(linkedlist_node->next, linkedlist_node, child);
+		}
+	}else{
+		linkedlist_addAfter(previous_node, child);
+	}
+}
+
 void hashmap_print(){
+	//ORDER THE WORDS BY COUNT
+	struct node* root = linkedlist_create(NULL);
+
+	int linkedlist_index = 1;
+	struct node* linkedlist_node = root;
+	linkedlist_node->count = 9999999; //Just a very large number
+
 	for(int i = 0; i < HASHMAP_SIZE; i++){
 		if(hashmap[i].node != NULL){
 
 			struct node *currentNode = hashmap[i].node;
 
 			while(true){
-				printf("%d - %s - %d\n", i, currentNode->word, currentNode->count);
+				struct node *currentNodeCopy;
+				currentNodeCopy = (struct node *) malloc( sizeof(struct node));
+
+				memcpy(currentNodeCopy, currentNode, sizeof(struct node));
+
+				findPlaceInLinkedList(linkedlist_node, NULL, currentNodeCopy);
 
 				if(currentNode->next != NULL){
 					currentNode = currentNode->next;
@@ -75,5 +99,29 @@ void hashmap_print(){
 			}
 				
 		}
+	}
+
+	printf("\nThe 100 most common words:\n");
+
+	//PRINT THE LINKED LIST
+
+	linkedlist_node = root;
+	if(linkedlist_node->next == 0){
+		printf("No words in text file!");
+		return;
+	}
+
+	struct node *currentNode = linkedlist_node->next;
+	int i = 1;
+
+	while(i <= 100){
+		printf("%02d - %s - %d\n", i, currentNode->word, currentNode->count);
+		
+		if(currentNode->next != NULL){
+			currentNode = currentNode->next;
+		}else{
+			break;
+		}
+		i++;
 	}
 }
